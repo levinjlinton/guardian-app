@@ -1,11 +1,9 @@
 'use client';
 
-export const dynamic = 'force-dynamic';
-
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-export default function SubscribePage() {
+function SubscribeContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const searchParams = useSearchParams();
@@ -18,7 +16,7 @@ export default function SubscribePage() {
       const res = await fetch('/api/stripe/checkout', { method: 'POST' });
       const data = await res.json();
       if (data.url) {
-        window.location.href = data.url; // Redirect to Stripe Checkout
+        window.location.href = data.url;
       } else {
         setError(data.error || 'Something went wrong. Please try again.');
         setLoading(false);
@@ -60,6 +58,18 @@ export default function SubscribePage() {
         <p style={s.fine}>You won't be charged until your 7-day trial ends. Cancel any time from settings.</p>
       </div>
     </div>
+  );
+}
+
+export default function SubscribePage() {
+  return (
+    <Suspense fallback={
+      <div style={{minHeight:'100vh',background:'radial-gradient(ellipse at 50% 0%, #1e1040 0%, #0a0015 60%)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+        <div style={{fontSize:48}}>🛡️</div>
+      </div>
+    }>
+      <SubscribeContent />
+    </Suspense>
   );
 }
 
