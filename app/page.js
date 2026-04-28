@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { FolderOpen, Calendar, ShieldOff, Target, Cloud, Palette, CheckCircle, ArrowRight, Shield } from 'lucide-react';
+import { FolderOpen, Calendar, ShieldOff, Target, Cloud, Palette, CheckCircle, ArrowRight } from 'lucide-react';
+import GuardianLogo from './components/GuardianLogo';
 
 const features = [
   { icon: <FolderOpen size={28}/>, title: 'Project & Deadline Tracking', desc: 'Add projects with deadlines, priorities, and progress tracking. Get alerted when due dates are approaching so nothing slips through the cracks.' },
@@ -37,8 +38,7 @@ export default function LandingPage() {
       {/* NAV */}
       <nav style={s.nav}>
         <div style={s.navLogo}>
-          <div style={s.logoIcon}><Shield size={18} color="#fff"/></div>
-          <span style={s.logoName}>Guardian</span>
+          <GuardianLogo size={30} showText={true} textSize={17} />
         </div>
         <div style={s.navRight}>
           <Link href="#features" style={s.navLink}>Features</Link>
@@ -52,7 +52,7 @@ export default function LandingPage() {
       {/* HERO */}
       <section style={s.hero}>
         <div style={s.heroContent}>
-          <div style={s.heroBadge}>🛡️ Your personal time guardian</div>
+          <div style={s.heroBadge}>Your personal time guardian</div>
           <h1 style={s.heroTitle}>
             Stop scrolling.<br />Start shipping.
           </h1>
@@ -203,7 +203,7 @@ export default function LandingPage() {
       <footer style={s.footer}>
         <div style={s.footerTop}>
           <div>
-            <div style={s.footerLogo}>🛡️ Guardian</div>
+            <div style={s.footerLogo}><GuardianLogo size={24} showText={true} textSize={15} textColor="#94a3b8" /></div>
             <p style={s.footerTagline}>Plan your time. Block your distractions.<br/>Hit your deadlines.</p>
           </div>
           <div style={s.footerLinks}>

@@ -9,8 +9,10 @@ import {
   LayoutDashboard, FolderOpen, Calendar, Target, Bot, Settings,
   FolderCheck, AlertTriangle, Clock, Plus, ChevronLeft, ChevronRight,
   MoreHorizontal, Pencil, Trash2, CheckCheck, Search, Flame,
-  Shield, LogOut, Bell, MessageSquare, Sparkles, X
+  LogOut, Bell, MessageSquare, Sparkles, X,
+  Check, CheckCircle, Ban, Info, Palette, User, Globe
 } from 'lucide-react';
+import GuardianLogo from '../components/GuardianLogo';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const HOURS = Array.from({ length: 16 }, (_, i) => i + 7);
@@ -202,7 +204,7 @@ export default function DashboardPage() {
     const { data: inserted, error } = await supabase.from('projects').insert({ ...data, user_id: user.id }).select().single();
     if (error) { toast('Failed to save project', 'error'); return; }
     setProjects(p => [...p, inserted]);
-    toast('Project added! 🎉', 'success');
+    toast('Project added!', 'success');
     setModal(null);
   }
 
@@ -271,7 +273,7 @@ export default function DashboardPage() {
     }
     const { data: inserted } = await supabase.from('schedule_blocks').insert(newBlocks).select();
     setBlocks(b => b.filter(x => !autoIds.includes(x.id)).concat(inserted || []));
-    toast(`Auto-schedule done! ✨`, 'success');
+    toast(`Auto-schedule done!`, 'success');
   }
 
   // ============================================================
@@ -282,7 +284,7 @@ export default function DashboardPage() {
     setSettings(s => ({ ...s, blocking: newVal }));
     await supabase.from('user_settings').update({ blocking_enabled: newVal }).eq('user_id', user.id);
     localStorage.setItem('guardian-blocking', newVal ? '1' : '0');
-    toast(newVal ? '🚫 Social media blocked!' : '✅ Blocking off', 'info');
+    toast(newVal ? 'Social media blocked' : 'Blocking off', 'info');
   }
 
   async function setTheme(theme) {
@@ -302,7 +304,7 @@ export default function DashboardPage() {
     let url = newSiteUrl.trim().replace(/^https?:\/\//, '').replace(/\/.*/, '');
     if (!url) return toast('Enter a domain', 'error');
     if (blockedSites.some(s => s.url === url)) return toast('Already in list', 'error');
-    const { data } = await supabase.from('blocked_sites').insert({ user_id: user.id, url, name: url, icon: '🌐' }).select().single();
+    const { data } = await supabase.from('blocked_sites').insert({ user_id: user.id, url, name: url }).select().single();
     if (data) setBlockedSites(s => [...s, data]);
     setNewSiteUrl('');
     toast('Site added!', 'success');
@@ -322,7 +324,7 @@ export default function DashboardPage() {
     if (!('Notification' in window)) return toast('Notifications not supported in this browser', 'error');
     const perm = await Notification.requestPermission();
     setNotifPermission(perm);
-    if (perm === 'granted') toast('🔔 Notifications enabled!', 'success');
+    if (perm === 'granted') toast('Notifications enabled!', 'success');
     else toast('Notifications blocked', 'info');
   }
 
@@ -379,7 +381,7 @@ export default function DashboardPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ block, weekDates: dates }),
       });
-      toast('Synced to Google Calendar! 📅', 'success');
+      toast('Synced to Google Calendar!', 'success');
     } catch {
       toast('Sync failed', 'error');
     }
@@ -462,7 +464,7 @@ export default function DashboardPage() {
     return (
       <div style={{ minHeight: '100vh', background: '#0f0f13', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'system-ui', color: '#e2e8f0' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>🛡️</div>
+          <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'center' }}><GuardianLogo size={48} /></div>
           <div style={{ color: '#94a3b8' }}>Loading Guardian…</div>
         </div>
       </div>
@@ -569,7 +571,7 @@ export default function DashboardPage() {
       {/* SIDEBAR */}
       <aside className="sidebar">
         <div className="logo">
-          <div className="logo-icon"><Shield size={20} color="#fff"/></div>
+          <GuardianLogo size={28} />
           <div className="logo-text"><h1>Guardian</h1><span>Time Manager</span></div>
         </div>
         <nav>
@@ -635,14 +637,14 @@ export default function DashboardPage() {
               <div>
                 <div className="section-label">Today's Schedule</div>
                 {todayBlocks.length === 0
-                  ? <div className="empty-state" style={{padding:'24px 0'}}><div className="es-icon" style={{fontSize:32}}>📅</div><p>Nothing scheduled today.</p><button className="btn btn-secondary btn-sm" style={{marginTop:10}} onClick={()=>setView('schedule')}>Open Schedule →</button></div>
+                  ? <div className="empty-state" style={{padding:'24px 0'}}><div className="es-icon" style={{display:'flex',justifyContent:'center'}}><Calendar size={32} opacity={0.4}/></div><p>Nothing scheduled today.</p><button className="btn btn-secondary btn-sm" style={{marginTop:10}} onClick={()=>setView('schedule')}>Open Schedule →</button></div>
                   : <div className="timeline">{todayBlocks.map(b=><div key={b.id} className="tl-item" style={{borderLeftColor:blockColor(b.type)}}><div className="tl-time">{fmtTime(b.start_time)} – {fmtTime(b.end_time)}</div><div className="tl-title">{b.title}</div><div className="tl-sub">{b.type}</div></div>)}</div>
                 }
               </div>
               <div>
                 <div className="section-label">Upcoming Deadlines</div>
                 {activeProjects.length === 0
-                  ? <div className="empty-state" style={{padding:'24px 0'}}><div className="es-icon" style={{fontSize:32}}>🎉</div><p>No deadlines!</p></div>
+                  ? <div className="empty-state" style={{padding:'24px 0'}}><div className="es-icon" style={{display:'flex',justifyContent:'center'}}><CheckCircle size={32} opacity={0.4}/></div><p>No deadlines!</p></div>
                   : [...activeProjects].sort((a,b)=>new Date(a.deadline)-new Date(b.deadline)).slice(0,5).map(p=>{
                       const u=urgText(p.deadline);
                       return <div key={p.id} className="dl-item" onClick={()=>setView('projects')}>
@@ -670,7 +672,7 @@ export default function DashboardPage() {
                 <input placeholder="Search…" value={search} onChange={e=>setSearch(e.target.value)}/>
               </div>
               <select className="form-control" style={{width:130}} value={priorityFilter} onChange={e=>setPriorityFilter(e.target.value)}>
-                <option value="">All Priority</option><option value="high">🔴 High</option><option value="medium">🟡 Medium</option><option value="low">🟢 Low</option>
+                <option value="">All Priority</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option>
               </select>
               <select className="form-control" style={{width:130}} value={statusFilter} onChange={e=>setStatusFilter(e.target.value)}>
                 <option value="">All Status</option><option value="active">Active</option><option value="completed">Completed</option>
@@ -678,7 +680,7 @@ export default function DashboardPage() {
             </div>
             <div className="projects-grid">
               {filteredProjects.length === 0
-                ? <div className="empty-state" style={{gridColumn:'1/-1'}}><div className="es-icon">📁</div><h3>No projects</h3><p>Click "+ New Project" to get started</p></div>
+                ? <div className="empty-state" style={{gridColumn:'1/-1'}}><div className="es-icon" style={{display:'flex',justifyContent:'center'}}><FolderOpen size={32} opacity={0.4}/></div><h3>No projects</h3><p>Click "+ New Project" to get started</p></div>
                 : filteredProjects.map(p => {
                     const u = urgText(p.deadline);
                     return <div key={p.id} className="project-card">
@@ -686,7 +688,7 @@ export default function DashboardPage() {
                         <div>
                           <div style={{display:'flex',gap:6,marginBottom:8,flexWrap:'wrap'}}>
                             <span className={`badge badge-${p.priority}`}>{p.priority}</span>
-                            {p.status==='completed'&&<span className="badge badge-done">✓ Done</span>}
+                            {p.status==='completed'&&<span className="badge badge-done" style={{display:'inline-flex',alignItems:'center',gap:3}}><Check size={10}/> Done</span>}
                           </div>
                           <div className="pc-name">{p.name}</div>
                           {p.description&&<div className="pc-desc">{p.description}</div>}
@@ -782,7 +784,7 @@ export default function DashboardPage() {
                     <span>{timerRunning?'Timer running':settings.blocking?'Blocking active':'Idle'}</span>
                   </div>
                   <div className="timer-display">{timerMin}:{timerSecStr}</div>
-                  <div style={{fontSize:13,color:'var(--text-muted)',marginBottom:24}}>{timerRunning?'Stay focused!':timerSecs===0?'Session complete! 🎉':'Ready?'}</div>
+                  <div style={{fontSize:13,color:'var(--text-muted)',marginBottom:24}}>{timerRunning?'Stay focused!':timerSecs===0?'Session complete!':'Ready?'}</div>
                   <div style={{display:'flex',gap:10,justifyContent:'center',marginBottom:16}}>
                     <button className="btn btn-primary" onClick={()=>{if(timerSecs===0){setTimerSecs(timerTotal);}setTimerRunning(r=>!r);}}>
                       {timerRunning?'⏸ Pause':'▶ Start'}
@@ -795,14 +797,14 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="card">
-                <div style={{fontSize:15,fontWeight:700,marginBottom:4}}>🚫 Site Blocker</div>
+                <div style={{fontSize:15,fontWeight:700,marginBottom:4,display:'flex',alignItems:'center',gap:6}}><Ban size={15}/> Site Blocker</div>
                 <div style={{fontSize:12,color:'var(--text-muted)',marginBottom:18}}>Block social media during focus sessions</div>
                 <div className="toggle-row" style={{marginBottom:20}}>
                   <button className={`toggle ${settings.blocking?'on':''}`} onClick={toggleBlocking}></button>
-                  <div><div style={{fontWeight:500}}>Block social media</div><div style={{fontSize:11,color:'var(--text-muted)'}}>{settings.blocking?'🚫 Blocking active':'Enable to block sites'}</div></div>
+                  <div><div style={{fontWeight:500}}>Block social media</div><div style={{fontSize:11,color:'var(--text-muted)'}}>{settings.blocking?'Blocking active':'Enable to block sites'}</div></div>
                 </div>
                 <div className="section-label">Blocked Sites</div>
-                {blockedSites.map(s=><div key={s.id} className="blocked-site"><span>{s.icon||'🌐'}</span><div><div className="site-name">{s.name}</div><div className="site-url">{s.url}</div></div><button className="remove-btn" onClick={()=>removeSite(s.id)}>×</button></div>)}
+                {blockedSites.map(s=><div key={s.id} className="blocked-site"><span style={{display:'flex',alignItems:'center'}}>{s.icon ? s.icon : <Globe size={14}/>}</span><div><div className="site-name">{s.name}</div><div className="site-url">{s.url}</div></div><button className="remove-btn" onClick={()=>removeSite(s.id)}>×</button></div>)}
               </div>
             </div>
           </div>
@@ -812,7 +814,7 @@ export default function DashboardPage() {
         {view === 'ai' && (
           <div>
             <div className="page-header">
-              <div><h2>🤖 AI Assistant</h2><p>Ask anything about your schedule, projects, or productivity</p></div>
+              <div><h2 style={{display:'flex',alignItems:'center',gap:8}}><Bot size={20}/> AI Assistant</h2><p>Ask anything about your schedule, projects, or productivity</p></div>
             </div>
             <div style={{maxWidth:680,margin:'0 auto'}}>
               <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:16,overflow:'hidden',display:'flex',flexDirection:'column',height:'60vh'}}>
@@ -866,7 +868,7 @@ export default function DashboardPage() {
           <div>
             <div className="page-header"><div><h2>Settings</h2><p>Customize Guardian</p></div></div>
             <div style={{marginBottom:32}}>
-              <h3 style={{fontSize:15,fontWeight:700,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>🎨 Theme</h3>
+              <h3 style={{fontSize:15,fontWeight:700,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)',display:'flex',alignItems:'center',gap:8}}><Palette size={15}/> Theme</h3>
               <div className="theme-grid">
                 {Object.entries(THEMES).map(([key,t])=>(
                   <div key={key} className={`theme-swatch ${settings.theme===key?'active':''}`} onClick={()=>setTheme(key)}>
@@ -881,20 +883,20 @@ export default function DashboardPage() {
               </div>
             </div>
             <div style={{marginBottom:32}}>
-              <h3 style={{fontSize:15,fontWeight:700,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>🚫 Blocked Sites</h3>
-              {blockedSites.map(s=><div key={s.id} className="blocked-site"><span>{s.icon||'🌐'}</span><div><div className="site-name">{s.name}</div><div className="site-url">{s.url}</div></div><button className="remove-btn" onClick={()=>removeSite(s.id)}>×</button></div>)}
+              <h3 style={{fontSize:15,fontWeight:700,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)',display:'flex',alignItems:'center',gap:8}}><Ban size={15}/> Blocked Sites</h3>
+              {blockedSites.map(s=><div key={s.id} className="blocked-site"><span style={{display:'flex',alignItems:'center'}}>{s.icon ? s.icon : <Globe size={14}/>}</span><div><div className="site-name">{s.name}</div><div className="site-url">{s.url}</div></div><button className="remove-btn" onClick={()=>removeSite(s.id)}>×</button></div>)}
               <div style={{display:'flex',gap:10,marginTop:10}}>
                 <input className="form-control" placeholder="Add domain e.g. reddit.com" style={{maxWidth:280}} value={newSiteUrl} onChange={e=>setNewSiteUrl(e.target.value)}/>
                 <button className="btn btn-primary btn-sm" onClick={addSite}>+ Add</button>
               </div>
             </div>
             <div style={{marginBottom:32}}>
-              <h3 style={{fontSize:15,fontWeight:700,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>🔔 Notifications</h3>
+              <h3 style={{fontSize:15,fontWeight:700,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)',display:'flex',alignItems:'center',gap:8}}><Bell size={15}/> Notifications</h3>
               <div className="toggle-row"><button className={`toggle ${settings.notifDeadlines?'on':''}`} onClick={()=>toggleSetting('notifDeadlines','notif_deadlines')}></button><div><div style={{fontWeight:500}}>Deadline reminders</div><div style={{fontSize:11,color:'var(--text-muted)'}}>Alert when deadline is within 24h</div></div></div>
               <div className="toggle-row"><button className={`toggle ${settings.notifTimer?'on':''}`} onClick={()=>toggleSetting('notifTimer','notif_timer')}></button><div><div style={{fontWeight:500}}>Timer complete</div><div style={{fontSize:11,color:'var(--text-muted)'}}>Notify when session ends</div></div></div>
             </div>
             <div style={{marginBottom:32}}>
-              <h3 style={{fontSize:15,fontWeight:700,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>👤 Account</h3>
+              <h3 style={{fontSize:15,fontWeight:700,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)',display:'flex',alignItems:'center',gap:8}}><User size={15}/> Account</h3>
               <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:16,padding:'14px',background:'var(--surface2)',borderRadius:10}}>
                 {user?.user_metadata?.avatar_url&&<img src={user.user_metadata.avatar_url} alt="" style={{width:40,height:40,borderRadius:'50%'}}/>}
                 <div><div style={{fontWeight:600}}>{user?.user_metadata?.full_name||user?.email}</div><div style={{fontSize:12,color:'var(--text-muted)'}}>{user?.email}</div></div>
@@ -903,10 +905,10 @@ export default function DashboardPage() {
             </div>
 
             <div style={{marginBottom:32}}>
-              <h3 style={{fontSize:15,fontWeight:700,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>📅 Google Calendar</h3>
+              <h3 style={{fontSize:15,fontWeight:700,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)',display:'flex',alignItems:'center',gap:8}}><Calendar size={15}/> Google Calendar</h3>
               {calConnected
                 ? <div style={{display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
-                    <div style={{display:'flex',alignItems:'center',gap:8,color:'var(--success)',fontSize:13,fontWeight:600}}><span>✅</span> Google Calendar connected</div>
+                    <div style={{display:'flex',alignItems:'center',gap:8,color:'var(--success)',fontSize:13,fontWeight:600}}><CheckCircle size={14}/> Google Calendar connected</div>
                     <button className="btn btn-secondary btn-sm" onClick={loadCalendarEvents} disabled={calLoading}>{calLoading?'Loading…':'Refresh Events'}</button>
                   </div>
                 : <div>
@@ -933,21 +935,21 @@ export default function DashboardPage() {
             </div>
 
             <div style={{marginBottom:32}}>
-              <h3 style={{fontSize:15,fontWeight:700,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>🔔 Push Notifications</h3>
+              <h3 style={{fontSize:15,fontWeight:700,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)',display:'flex',alignItems:'center',gap:8}}><Bell size={15}/> Push Notifications</h3>
               <p style={{fontSize:13,color:'var(--text-muted)',marginBottom:14}}>Get notified about upcoming deadlines directly in your browser.</p>
               {notifPermission === 'granted'
-                ? <div style={{display:'flex',alignItems:'center',gap:8,color:'var(--success)',fontSize:13,fontWeight:600}}><span>✅</span> Notifications are enabled</div>
+                ? <div style={{display:'flex',alignItems:'center',gap:8,color:'var(--success)',fontSize:13,fontWeight:600}}><CheckCircle size={14}/> Notifications are enabled</div>
                 : notifPermission === 'denied'
-                ? <div style={{fontSize:13,color:'var(--danger)'}}>🚫 Notifications blocked — enable them in your browser settings.</div>
+                ? <div style={{display:'flex',alignItems:'center',gap:8,fontSize:13,color:'var(--danger)'}}><Ban size={14}/> Notifications blocked — enable them in your browser settings.</div>
                 : <button className="btn btn-primary btn-sm" onClick={requestNotifications}>Enable Notifications</button>
               }
             </div>
 
             <div style={{marginBottom:32}}>
-              <h3 style={{fontSize:15,fontWeight:700,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>💬 Send Feedback</h3>
+              <h3 style={{fontSize:15,fontWeight:700,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)',display:'flex',alignItems:'center',gap:8}}><MessageSquare size={15}/> Send Feedback</h3>
               <p style={{fontSize:13,color:'var(--text-muted)',marginBottom:14}}>Something broken? Have an idea? Let us know.</p>
               {feedbackSent
-                ? <div style={{color:'var(--success)',fontSize:13,fontWeight:600}}>✅ Feedback received — thank you!</div>
+                ? <div style={{display:'flex',alignItems:'center',gap:8,color:'var(--success)',fontSize:13,fontWeight:600}}><CheckCircle size={14}/> Feedback received — thank you!</div>
                 : <form onSubmit={submitFeedback}>
                     <textarea className="form-control" placeholder="Your feedback..." value={feedbackText} onChange={e=>setFeedbackText(e.target.value)} style={{marginBottom:10,minHeight:90}}></textarea>
                     <button type="submit" className="btn btn-primary btn-sm">Send Feedback</button>
@@ -962,13 +964,13 @@ export default function DashboardPage() {
       {modal === 'addProject' && (
         <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)setModal(null)}}>
           <div className="modal">
-            <div className="modal-head"><h3>📁 New Project</h3><button className="btn-ghost" onClick={()=>setModal(null)}>×</button></div>
+            <div className="modal-head"><h3 style={{display:'flex',alignItems:'center',gap:8}}><FolderOpen size={16}/> New Project</h3><button className="btn-ghost" onClick={()=>setModal(null)}>×</button></div>
             <form onSubmit={handleAddProject}>
               <div className="form-group"><label>Project Name *</label><input name="name" className="form-control" placeholder="e.g. History Essay" required/></div>
               <div className="form-group"><label>Description</label><textarea name="desc" className="form-control" placeholder="What needs to be done?"></textarea></div>
               <div className="form-row">
                 <div className="form-group"><label>Deadline</label><input name="deadline" type="datetime-local" className="form-control"/></div>
-                <div className="form-group"><label>Priority</label><select name="priority" className="form-control"><option value="high">🔴 High</option><option value="medium">🟡 Medium</option><option value="low">🟢 Low</option></select></div>
+                <div className="form-group"><label>Priority</label><select name="priority" className="form-control"><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></div>
               </div>
               <div className="form-row">
                 <div className="form-group"><label>Estimated Hours</label><input name="hours" type="number" className="form-control" placeholder="e.g. 3" min="0.5" step="0.5"/></div>
@@ -983,13 +985,13 @@ export default function DashboardPage() {
       {modal === 'editProject' && editingProject && (
         <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)setModal(null)}}>
           <div className="modal">
-            <div className="modal-head"><h3>✏️ Edit Project</h3><button className="btn-ghost" onClick={()=>setModal(null)}>×</button></div>
+            <div className="modal-head"><h3 style={{display:'flex',alignItems:'center',gap:8}}><Pencil size={16}/> Edit Project</h3><button className="btn-ghost" onClick={()=>setModal(null)}>×</button></div>
             <form onSubmit={handleEditProject}>
               <div className="form-group"><label>Project Name *</label><input name="name" className="form-control" defaultValue={editingProject.name} required/></div>
               <div className="form-group"><label>Description</label><textarea name="desc" className="form-control" defaultValue={editingProject.description}></textarea></div>
               <div className="form-row">
                 <div className="form-group"><label>Deadline</label><input name="deadline" type="datetime-local" className="form-control" defaultValue={editingProject.deadline?.slice(0,16)}/></div>
-                <div className="form-group"><label>Priority</label><select name="priority" className="form-control" defaultValue={editingProject.priority}><option value="high">🔴 High</option><option value="medium">🟡 Medium</option><option value="low">🟢 Low</option></select></div>
+                <div className="form-group"><label>Priority</label><select name="priority" className="form-control" defaultValue={editingProject.priority}><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></div>
               </div>
               <div className="form-row">
                 <div className="form-group"><label>Estimated Hours</label><input name="hours" type="number" className="form-control" defaultValue={editingProject.hours} min="0.5" step="0.5"/></div>
@@ -1005,11 +1007,11 @@ export default function DashboardPage() {
       {modal === 'addBlock' && (
         <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)setModal(null)}}>
           <div className="modal">
-            <div className="modal-head"><h3>📅 Add Block</h3><button className="btn-ghost" onClick={()=>setModal(null)}>×</button></div>
+            <div className="modal-head"><h3 style={{display:'flex',alignItems:'center',gap:8}}><Calendar size={16}/> Add Block</h3><button className="btn-ghost" onClick={()=>setModal(null)}>×</button></div>
             <form onSubmit={handleAddBlock}>
               <div className="form-group"><label>Title *</label><input name="title" className="form-control" placeholder="e.g. Study Session" required/></div>
               <div className="form-row">
-                <div className="form-group"><label>Type</label><select name="type" className="form-control"><option value="work">💼 Work</option><option value="study">📚 Study</option><option value="break">☕ Break</option><option value="personal">🏠 Personal</option></select></div>
+                <div className="form-group"><label>Type</label><select name="type" className="form-control"><option value="work">Work</option><option value="study">Study</option><option value="break">Break</option><option value="personal">Personal</option></select></div>
                 <div className="form-group"><label>Day</label><select name="day" className="form-control" defaultValue={blockFormDefaults.day??0}>{DAYS.map((d,i)=><option key={i} value={i}>{d}</option>)}</select></div>
               </div>
               <div className="form-row">
@@ -1027,7 +1029,7 @@ export default function DashboardPage() {
       <div className="toast-container">
         {toasts.map(t=>(
           <div key={t.id} className={`toast ${t.type}`}>
-            <span>{{success:'✅',error:'❌',info:'ℹ️'}[t.type]}</span><span>{t.msg}</span>
+            <span style={{display:'flex',alignItems:'center'}}>{ t.type==='success' ? <CheckCircle size={14}/> : t.type==='error' ? <X size={14}/> : <Info size={14}/> }</span><span>{t.msg}</span>
           </div>
         ))}
       </div>

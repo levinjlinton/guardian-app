@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Shield } from 'lucide-react';
+import GuardianLogo from '../components/GuardianLogo';
 
 export const metadata = {
   title: 'Privacy Policy — Guardian',
@@ -11,8 +11,7 @@ export default function PrivacyPage() {
     <div style={s.page}>
       <nav style={s.nav}>
         <Link href="/" style={s.navLogo}>
-          <div style={s.logoIcon}><Shield size={18} color="#fff"/></div>
-          <span style={s.logoName}>Guardian</span>
+          <GuardianLogo size={26} showText={true} textSize={16} />
         </Link>
         <Link href="/login" style={s.navLink}>Sign In →</Link>
       </nav>
@@ -112,9 +111,7 @@ function Section({ title, children }) {
 const s = {
   page: { minHeight: '100vh', background: '#0f0f13', color: '#e2e8f0', fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" },
   nav: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 60px', borderBottom: '1px solid #2a2a3a', position: 'sticky', top: 0, background: 'rgba(15,15,19,0.95)', backdropFilter: 'blur(10px)', zIndex: 100 },
-  navLogo: { display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', color: '#e2e8f0' },
-  logoIcon: { width: 32, height: 32, background: '#818cf8', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  logoName: { fontSize: 16, fontWeight: 800 },
+  navLogo: { display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' },
   navLink: { color: '#818cf8', textDecoration: 'none', fontSize: 13, fontWeight: 600 },
   container: { maxWidth: 740, margin: '0 auto', padding: '60px 40px' },
   header: { marginBottom: 48, paddingBottom: 32, borderBottom: '1px solid #2a2a3a' },

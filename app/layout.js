@@ -24,7 +24,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+        <link rel="alternate icon" href="/favicon.ico" />
         <link rel="canonical" href="https://www.guardianhours.com" />
       </head>
       <body style={{ margin: 0, fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>

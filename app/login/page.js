@@ -3,6 +3,8 @@
 import { useState, Suspense } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useSearchParams, useRouter } from 'next/navigation';
+import GuardianLogo from '../components/GuardianLogo';
+import { AlertTriangle, CheckCircle } from 'lucide-react';
 
 function LoginContent() {
   const searchParams = useSearchParams();
@@ -93,7 +95,9 @@ function LoginContent() {
     <div style={s.page}>
       <div style={s.card}>
         <div style={s.logo}>
-          <div style={s.logoIcon}>🛡️</div>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 10 }}>
+            <GuardianLogo size={52} />
+          </div>
           <h1 style={s.logoName}>Guardian</h1>
           <p style={s.logoTag}>Your personal time manager</p>
         </div>
@@ -107,8 +111,8 @@ function LoginContent() {
           </button>
         </div>
 
-        {error && <div style={s.errorBox}>⚠️ {error}</div>}
-        {success && <div style={s.successBox}>✅ {success}</div>}
+        {error && <div style={s.errorBox}><AlertTriangle size={14} style={{flexShrink:0}}/> {error}</div>}
+        {success && <div style={s.successBox}><CheckCircle size={14} style={{flexShrink:0}}/> {success}</div>}
 
         <form onSubmit={handleEmailAuth} style={s.form}>
           <div style={s.fieldGroup}>
@@ -165,7 +169,7 @@ export default function LoginPage() {
   return (
     <Suspense fallback={
       <div style={{minHeight:'100vh',background:'radial-gradient(ellipse at 50% 0%, #1e1040 0%, #0a0015 60%)',display:'flex',alignItems:'center',justifyContent:'center'}}>
-        <div style={{fontSize:48}}>🛡️</div>
+        <GuardianLogo size={48} />
       </div>
     }>
       <LoginContent />
@@ -177,14 +181,13 @@ const s = {
   page: { minHeight:'100vh', background:'radial-gradient(ellipse at 50% 0%, #1e1040 0%, #0a0015 60%)', display:'flex', alignItems:'center', justifyContent:'center', padding:'24px', fontFamily:"-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" },
   card: { background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'24px', padding:'40px', width:'100%', maxWidth:'420px', backdropFilter:'blur(20px)', color:'#e2e8f0' },
   logo: { textAlign:'center', marginBottom:'24px' },
-  logoIcon: { width:'52px', height:'52px', background:'#818cf8', borderRadius:'14px', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'26px', margin:'0 auto 10px' },
   logoName: { fontSize:'22px', fontWeight:'800', margin:'0 0 4px' },
   logoTag: { fontSize:'12px', color:'#94a3b8', margin:0 },
   tabs: { display:'flex', background:'rgba(255,255,255,0.05)', borderRadius:'10px', padding:'4px', marginBottom:'20px' },
   tab: { flex:1, padding:'8px', border:'none', background:'none', color:'#64748b', fontWeight:'600', fontSize:'13px', cursor:'pointer', borderRadius:'7px', transition:'all 0.15s', fontFamily:'inherit' },
   tabActive: { background:'#818cf8', color:'#fff' },
-  errorBox: { background:'rgba(248,113,113,0.12)', border:'1px solid rgba(248,113,113,0.3)', borderRadius:'8px', padding:'10px 14px', fontSize:'13px', color:'#f87171', marginBottom:'14px' },
-  successBox: { background:'rgba(74,222,128,0.1)', border:'1px solid rgba(74,222,128,0.3)', borderRadius:'8px', padding:'10px 14px', fontSize:'13px', color:'#4ade80', marginBottom:'14px' },
+  errorBox: { display:'flex', alignItems:'center', gap:'8px', background:'rgba(248,113,113,0.12)', border:'1px solid rgba(248,113,113,0.3)', borderRadius:'8px', padding:'10px 14px', fontSize:'13px', color:'#f87171', marginBottom:'14px' },
+  successBox: { display:'flex', alignItems:'center', gap:'8px', background:'rgba(74,222,128,0.1)', border:'1px solid rgba(74,222,128,0.3)', borderRadius:'8px', padding:'10px 14px', fontSize:'13px', color:'#4ade80', marginBottom:'14px' },
   form: { display:'flex', flexDirection:'column', marginBottom:'16px' },
   fieldGroup: { marginBottom:'12px' },
   label: { display:'block', fontSize:'11px', fontWeight:'700', color:'#94a3b8', marginBottom:'6px', textTransform:'uppercase', letterSpacing:'0.6px' },
