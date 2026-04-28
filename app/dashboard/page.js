@@ -462,7 +462,7 @@ export default function DashboardPage() {
   // ============================================================
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#0f0f13', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'system-ui', color: '#e2e8f0' }}>
+      <div style={{ minHeight: '100vh', background: '#0f0f13', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Inter', system-ui, sans-serif", color: '#e2e8f0' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'center' }}><GuardianLogo size={48} /></div>
           <div style={{ color: '#94a3b8' }}>Loading Guardian…</div>
@@ -484,7 +484,7 @@ export default function DashboardPage() {
         [data-theme="bold"]{--bg:#12001f;--surface:#1e0035;--surface2:#2a0050;--border:#3d0070;--text:#fff;--text-muted:#c084fc;--accent:#f59e0b;--accent-hover:#fbbf24}
         [data-theme="rose"]{--bg:#1a0510;--surface:#2d0a1e;--surface2:#3d1030;--border:#5a1845;--text:#fce7f3;--text-muted:#f9a8d4;--accent:#fb7185;--accent-hover:#fda4af}
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+        body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
         .sidebar{width:240px;min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100}
         .logo{display:flex;align-items:center;gap:10px;padding:22px 20px 18px;border-bottom:1px solid var(--border)}
         .logo-icon{width:36px;height:36px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}

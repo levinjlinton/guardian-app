@@ -61,7 +61,7 @@ export default function GuardianLogo({
           fontWeight: 800,
           color: textColor,
           letterSpacing: '-0.3px',
-          fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+          fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
           lineHeight: 1,
         }}>
           Guardian

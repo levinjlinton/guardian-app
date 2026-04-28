@@ -76,7 +76,7 @@ export default function SubscribePage() {
 }
 
 const s = {
-  page: { minHeight:'100vh', background:'radial-gradient(ellipse at 50% 0%, #1e1040 0%, #0a0015 60%)', display:'flex', alignItems:'center', justifyContent:'center', padding:24, fontFamily:"-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" },
+  page: { minHeight:'100vh', background:'radial-gradient(ellipse at 50% 0%, #1e1040 0%, #0a0015 60%)', display:'flex', alignItems:'center', justifyContent:'center', padding:24, fontFamily:"'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" },
   card: { background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:24, padding:40, width:'100%', maxWidth:440, backdropFilter:'blur(20px)', color:'#e2e8f0', textAlign:'center' },
   icon: { display:'flex', justifyContent:'center', marginBottom:16 },
   title: { fontSize:28, fontWeight:800, marginBottom:8, letterSpacing:-1 },

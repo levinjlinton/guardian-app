@@ -18,7 +18,7 @@ export default function SuccessPage() {
 }
 
 const s = {
-  page: { minHeight:'100vh', background:'radial-gradient(ellipse at 50% 0%, #0d2010 0%, #050f05 60%)', display:'flex', alignItems:'center', justifyContent:'center', padding:24, fontFamily:"-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" },
+  page: { minHeight:'100vh', background:'radial-gradient(ellipse at 50% 0%, #0d2010 0%, #050f05 60%)', display:'flex', alignItems:'center', justifyContent:'center', padding:24, fontFamily:"'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" },
   card: { background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:24, padding:48, width:'100%', maxWidth:440, backdropFilter:'blur(20px)', color:'#e2e8f0', textAlign:'center' },
   emoji: { display:'flex', justifyContent:'center', marginBottom:20 },
   title: { fontSize:28, fontWeight:800, marginBottom:12, letterSpacing:-1 },

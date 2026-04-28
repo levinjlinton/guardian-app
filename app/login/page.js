@@ -178,7 +178,7 @@ export default function LoginPage() {
 }
 
 const s = {
-  page: { minHeight:'100vh', background:'radial-gradient(ellipse at 50% 0%, #1e1040 0%, #0a0015 60%)', display:'flex', alignItems:'center', justifyContent:'center', padding:'24px', fontFamily:"-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" },
+  page: { minHeight:'100vh', background:'radial-gradient(ellipse at 50% 0%, #1e1040 0%, #0a0015 60%)', display:'flex', alignItems:'center', justifyContent:'center', padding:'24px', fontFamily:"'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" },
   card: { background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'24px', padding:'40px', width:'100%', maxWidth:'420px', backdropFilter:'blur(20px)', color:'#e2e8f0' },
   logo: { textAlign:'center', marginBottom:'24px' },
   logoName: { fontSize:'22px', fontWeight:'800', margin:'0 0 4px' },

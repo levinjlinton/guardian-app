@@ -236,7 +236,7 @@ export default function LandingPage() {
 }
 
 const s = {
-  page: { minHeight:'100vh', background:'#0f0f13', color:'#e2e8f0', fontFamily:"-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" },
+  page: { minHeight:'100vh', background:'#0f0f13', color:'#e2e8f0', fontFamily:"'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" },
   nav: { display:'flex', alignItems:'center', justifyContent:'space-between', padding:'18px 60px', borderBottom:'1px solid #2a2a3a', position:'sticky', top:0, background:'rgba(15,15,19,0.92)', backdropFilter:'blur(12px)', zIndex:100 },
   navLogo: { display:'flex', alignItems:'center', gap:10 },
   logoIcon: { width:34, height:34, background:'#818cf8', borderRadius:9, display:'flex', alignItems:'center', justifyContent:'center', fontSize:17 },
