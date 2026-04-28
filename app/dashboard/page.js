@@ -52,6 +52,12 @@ export default function DashboardPage() {
   // Schedule
   const [newSiteUrl, setNewSiteUrl] = useState('');
 
+  // Streak & feedback
+  const [streak, setStreak] = useState(0);
+  const [feedbackText, setFeedbackText] = useState('');
+  const [feedbackSent, setFeedbackSent] = useState(false);
+  const [notifPermission, setNotifPermission] = useState('default');
+
   // ============================================================
   // INIT
   // ============================================================
@@ -81,6 +87,35 @@ export default function DashboardPage() {
         document.documentElement.setAttribute('data-theme', settingsRes.data.theme || 'dark');
       }
       setLoading(false);
+
+      // Streak tracking
+      const today = new Date().toDateString();
+      const lastVisit = localStorage.getItem('guardian-last-visit');
+      const currentStreak = parseInt(localStorage.getItem('guardian-streak') || '0');
+      if (!lastVisit) {
+        localStorage.setItem('guardian-last-visit', today);
+        localStorage.setItem('guardian-streak', '1');
+        setStreak(1);
+      } else {
+        const diffDays = Math.round((new Date(today) - new Date(lastVisit)) / 86400000);
+        if (diffDays === 0) {
+          setStreak(currentStreak);
+        } else if (diffDays === 1) {
+          const ns = currentStreak + 1;
+          localStorage.setItem('guardian-last-visit', today);
+          localStorage.setItem('guardian-streak', String(ns));
+          setStreak(ns);
+        } else {
+          localStorage.setItem('guardian-last-visit', today);
+          localStorage.setItem('guardian-streak', '1');
+          setStreak(1);
+        }
+      }
+
+      // Notification permission
+      if ('Notification' in window) {
+        setNotifPermission(Notification.permission);
+      }
     }
     init();
   }, []);
@@ -262,6 +297,23 @@ export default function DashboardPage() {
   async function signOut() {
     await supabase.auth.signOut();
     router.push('/login');
+  }
+
+  async function requestNotifications() {
+    if (!('Notification' in window)) return toast('Notifications not supported in this browser', 'error');
+    const perm = await Notification.requestPermission();
+    setNotifPermission(perm);
+    if (perm === 'granted') toast('🔔 Notifications enabled!', 'success');
+    else toast('Notifications blocked', 'info');
+  }
+
+  async function submitFeedback(e) {
+    e.preventDefault();
+    if (!feedbackText.trim()) return;
+    await supabase.from('feedback').insert({ user_id: user.id, message: feedbackText.trim() }).then(() => {});
+    setFeedbackSent(true);
+    setFeedbackText('');
+    toast('Thanks for your feedback! 🙏', 'success');
   }
 
   // ============================================================
@@ -477,7 +529,16 @@ export default function DashboardPage() {
                 <h2>{now.getHours()<12?'Good morning ☀️':now.getHours()<17?'Good afternoon 🌤️':'Good evening 🌙'}</h2>
                 <p>{now.toLocaleDateString('en',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</p>
               </div>
-              <button className="btn btn-primary" onClick={() => setModal('addProject')}>+ New Project</button>
+              <div style={{display:'flex',alignItems:'center',gap:12}}>
+                {streak > 0 && (
+                  <div style={{display:'flex',alignItems:'center',gap:6,background:'rgba(251,191,36,0.12)',border:'1px solid rgba(251,191,36,0.25)',borderRadius:20,padding:'6px 14px'}}>
+                    <span style={{fontSize:16}}>🔥</span>
+                    <span style={{fontWeight:700,fontSize:14,color:'#fbbf24'}}>{streak} day{streak!==1?'s':''}</span>
+                    <span style={{fontSize:11,color:'#92400e'}}>streak</span>
+                  </div>
+                )}
+                <button className="btn btn-primary" onClick={() => setModal('addProject')}>+ New Project</button>
+              </div>
             </div>
 
             <div className="stats-grid">
@@ -710,6 +771,29 @@ export default function DashboardPage() {
                 <div><div style={{fontWeight:600}}>{user?.user_metadata?.full_name||user?.email}</div><div style={{fontSize:12,color:'var(--text-muted)'}}>{user?.email}</div></div>
               </div>
               <button className="btn btn-danger btn-sm" onClick={signOut}>Sign Out</button>
+            </div>
+
+            <div style={{marginBottom:32}}>
+              <h3 style={{fontSize:15,fontWeight:700,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>🔔 Push Notifications</h3>
+              <p style={{fontSize:13,color:'var(--text-muted)',marginBottom:14}}>Get notified about upcoming deadlines directly in your browser.</p>
+              {notifPermission === 'granted'
+                ? <div style={{display:'flex',alignItems:'center',gap:8,color:'var(--success)',fontSize:13,fontWeight:600}}><span>✅</span> Notifications are enabled</div>
+                : notifPermission === 'denied'
+                ? <div style={{fontSize:13,color:'var(--danger)'}}>🚫 Notifications blocked — enable them in your browser settings.</div>
+                : <button className="btn btn-primary btn-sm" onClick={requestNotifications}>Enable Notifications</button>
+              }
+            </div>
+
+            <div style={{marginBottom:32}}>
+              <h3 style={{fontSize:15,fontWeight:700,marginBottom:14,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>💬 Send Feedback</h3>
+              <p style={{fontSize:13,color:'var(--text-muted)',marginBottom:14}}>Something broken? Have an idea? Let us know.</p>
+              {feedbackSent
+                ? <div style={{color:'var(--success)',fontSize:13,fontWeight:600}}>✅ Feedback received — thank you!</div>
+                : <form onSubmit={submitFeedback}>
+                    <textarea className="form-control" placeholder="Your feedback..." value={feedbackText} onChange={e=>setFeedbackText(e.target.value)} style={{marginBottom:10,minHeight:90}}></textarea>
+                    <button type="submit" className="btn btn-primary btn-sm">Send Feedback</button>
+                  </form>
+              }
             </div>
           </div>
         )}
