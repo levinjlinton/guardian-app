@@ -1,12 +1,13 @@
 import Link from 'next/link';
+import { FolderOpen, Calendar, ShieldOff, Target, Cloud, Palette, CheckCircle, ArrowRight, Shield } from 'lucide-react';
 
 const features = [
-  { icon: '📁', title: 'Project & Deadline Tracking', desc: 'Add projects with deadlines, priorities, and progress tracking. Get alerted when due dates are approaching so nothing slips through the cracks.' },
-  { icon: '📅', title: 'Smart Schedule Builder', desc: 'Build your weekly schedule with time blocks. Hit Auto-Schedule and Guardian fills your work sessions automatically around your projects.' },
-  { icon: '🚫', title: 'Social Media Blocker', desc: 'Install the Chrome extension and Guardian blocks Instagram, TikTok, X, and YouTube while you focus. Out of sight, out of mind.' },
-  { icon: '🎯', title: 'Pomodoro Focus Timer', desc: '25, 45, or 90-minute focus sessions with a clean countdown timer. Work in bursts, rest between them, and get more done.' },
-  { icon: '☁️', title: 'Syncs Across Devices', desc: 'Log in from any device — your projects, schedule, and settings are always up to date and ready to go.' },
-  { icon: '🎨', title: '6 Beautiful Themes', desc: 'Dark, Light, Ocean, Forest, Bold, Rose — pick the vibe that keeps you in the zone and motivated to work.' },
+  { icon: <FolderOpen size={28}/>, title: 'Project & Deadline Tracking', desc: 'Add projects with deadlines, priorities, and progress tracking. Get alerted when due dates are approaching so nothing slips through the cracks.' },
+  { icon: <Calendar size={28}/>, title: 'Smart Schedule Builder', desc: 'Build your weekly schedule with time blocks. Hit Auto-Schedule and Guardian fills your work sessions automatically around your projects.' },
+  { icon: <ShieldOff size={28}/>, title: 'Social Media Blocker', desc: 'Install the Chrome extension and Guardian blocks Instagram, TikTok, X, and YouTube while you focus. Out of sight, out of mind.' },
+  { icon: <Target size={28}/>, title: 'Pomodoro Focus Timer', desc: '25, 45, or 90-minute focus sessions with a clean countdown timer. Work in bursts, rest between them, and get more done.' },
+  { icon: <Cloud size={28}/>, title: 'Syncs Across Devices', desc: 'Log in from any device — your projects, schedule, and settings are always up to date and ready to go.' },
+  { icon: <Palette size={28}/>, title: '6 Beautiful Themes', desc: 'Dark, Light, Ocean, Forest, Bold, Rose — pick the vibe that keeps you in the zone and motivated to work.' },
 ];
 
 const steps = [
@@ -36,7 +37,7 @@ export default function LandingPage() {
       {/* NAV */}
       <nav style={s.nav}>
         <div style={s.navLogo}>
-          <div style={s.logoIcon}>🛡️</div>
+          <div style={s.logoIcon}><Shield size={18} color="#fff"/></div>
           <span style={s.logoName}>Guardian</span>
         </div>
         <div style={s.navRight}>
@@ -169,7 +170,7 @@ export default function LandingPage() {
           </div>
           <div style={s.pricingFeatures}>
             {['Unlimited projects & deadlines','Weekly schedule builder with auto-scheduling','Pomodoro focus timer','Chrome extension to block social media','6 themes','Synced across all your devices','Cancel anytime'].map(f=>(
-              <div key={f} style={s.pricingFeature}><span style={s.check}>✓</span> {f}</div>
+              <div key={f} style={s.pricingFeature}><CheckCircle size={15} color="#4ade80"/> {f}</div>
             ))}
           </div>
           <Link href="/login" style={{...s.btnPrimary, fontSize:16, padding:'14px 32px', alignSelf:'center'}}>

@@ -5,6 +5,12 @@ export const dynamic = 'force-dynamic';
 import { useEffect, useState, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
+import {
+  LayoutDashboard, FolderOpen, Calendar, Target, Bot, Settings,
+  FolderCheck, AlertTriangle, Clock, Plus, ChevronLeft, ChevronRight,
+  MoreHorizontal, Pencil, Trash2, CheckCheck, Search, Flame,
+  Shield, LogOut, Bell, MessageSquare, Sparkles, X
+} from 'lucide-react';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const HOURS = Array.from({ length: 16 }, (_, i) => i + 7);
@@ -534,13 +540,20 @@ export default function DashboardPage() {
       {/* SIDEBAR */}
       <aside className="sidebar">
         <div className="logo">
-          <div className="logo-icon">🛡️</div>
+          <div className="logo-icon"><Shield size={20} color="#fff"/></div>
           <div className="logo-text"><h1>Guardian</h1><span>Time Manager</span></div>
         </div>
         <nav>
-          {[['dashboard','📊','Dashboard'],['projects','📁','Projects'],['schedule','📅','Schedule'],['focus','🎯','Focus'],['ai','🤖','AI Assistant'],['settings','⚙️','Settings']].map(([v,icon,label]) => (
+          {[
+            ['dashboard', <LayoutDashboard size={18}/>, 'Dashboard'],
+            ['projects',  <FolderOpen size={18}/>,      'Projects'],
+            ['schedule',  <Calendar size={18}/>,         'Schedule'],
+            ['focus',     <Target size={18}/>,           'Focus'],
+            ['ai',        <Bot size={18}/>,              'AI Assistant'],
+            ['settings',  <Settings size={18}/>,         'Settings'],
+          ].map(([v, icon, label]) => (
             <button key={v} className={`nav-item ${view===v?'active':''}`} onClick={() => setView(v)}>
-              <span>{icon}</span><span>{label}</span>
+              {icon}<span>{label}</span>
             </button>
           ))}
         </nav>
@@ -566,7 +579,7 @@ export default function DashboardPage() {
               <div style={{display:'flex',alignItems:'center',gap:12}}>
                 {streak > 0 && (
                   <div style={{display:'flex',alignItems:'center',gap:6,background:'rgba(251,191,36,0.12)',border:'1px solid rgba(251,191,36,0.25)',borderRadius:20,padding:'6px 14px'}}>
-                    <span style={{fontSize:16}}>🔥</span>
+                    <Flame size={16} color="#fbbf24"/>
                     <span style={{fontWeight:700,fontSize:14,color:'#fbbf24'}}>{streak} day{streak!==1?'s':''}</span>
                     <span style={{fontSize:11,color:'#92400e'}}>streak</span>
                   </div>
@@ -577,13 +590,13 @@ export default function DashboardPage() {
 
             <div className="stats-grid">
               {[
-                {icon:'📁',val:activeProjects.length,label:'Active Projects',color:'var(--accent)'},
-                {icon:'✅',val:projects.filter(p=>p.status==='completed').length,label:'Completed',color:'var(--success)'},
-                {icon:'⚠️',val:urgentProjects.length,label:'Due Soon',color:'var(--danger)'},
-                {icon:'📅',val:todayBlocks.length,label:"Today's Blocks",color:'var(--warning)'},
+                {icon:<FolderOpen size={22}/>,val:activeProjects.length,label:'Active Projects',color:'var(--accent)'},
+                {icon:<FolderCheck size={22}/>,val:projects.filter(p=>p.status==='completed').length,label:'Completed',color:'var(--success)'},
+                {icon:<AlertTriangle size={22}/>,val:urgentProjects.length,label:'Due Soon',color:'var(--danger)'},
+                {icon:<Clock size={22}/>,val:todayBlocks.length,label:"Today's Blocks",color:'var(--warning)'},
               ].map(s => (
                 <div className="stat-card" key={s.label}>
-                  <div className="stat-icon" style={{background:`${s.color}20`}}>{s.icon}</div>
+                  <div className="stat-icon" style={{background:`${s.color}20`,color:s.color}}>{s.icon}</div>
                   <div className="stat-info"><h3 style={{color:s.color}}>{s.val}</h3><p>{s.label}</p></div>
                 </div>
               ))}
@@ -624,7 +637,7 @@ export default function DashboardPage() {
             </div>
             <div className="filter-bar">
               <div className="search-wrap">
-                <span style={{position:'absolute',left:11,top:'50%',transform:'translateY(-50%)',color:'var(--text-muted)'}}>🔍</span>
+                <span style={{position:'absolute',left:11,top:'50%',transform:'translateY(-50%)',color:'var(--text-muted)',display:'flex'}}><Search size={14}/></span>
                 <input placeholder="Search…" value={search} onChange={e=>setSearch(e.target.value)}/>
               </div>
               <select className="form-control" style={{width:130}} value={priorityFilter} onChange={e=>setPriorityFilter(e.target.value)}>
@@ -650,11 +663,11 @@ export default function DashboardPage() {
                           {p.description&&<div className="pc-desc">{p.description}</div>}
                         </div>
                         <div className="dots-menu">
-                          <button className="dots-btn" onClick={()=>setOpenDropdown(openDropdown===p.id?null:p.id)}>⋯</button>
+                          <button className="dots-btn" onClick={()=>setOpenDropdown(openDropdown===p.id?null:p.id)}><MoreHorizontal size={18}/></button>
                           {openDropdown===p.id&&<div className="dropdown">
-                            <div className="drop-item" onClick={()=>{setEditingProject(p);setModal('editProject');setOpenDropdown(null)}}>✏️ Edit</div>
-                            <div className="drop-item" onClick={()=>{markComplete(p.id);setOpenDropdown(null)}}>✓ Complete</div>
-                            <div className="drop-item danger" onClick={()=>{deleteProject(p.id);setOpenDropdown(null)}}>🗑 Delete</div>
+                            <div className="drop-item" onClick={()=>{setEditingProject(p);setModal('editProject');setOpenDropdown(null)}}><Pencil size={14}/> Edit</div>
+                            <div className="drop-item" onClick={()=>{markComplete(p.id);setOpenDropdown(null)}}><CheckCheck size={14}/> Complete</div>
+                            <div className="drop-item danger" onClick={()=>{deleteProject(p.id);setOpenDropdown(null)}}><Trash2 size={14}/> Delete</div>
                           </div>}
                         </div>
                       </div>
@@ -681,14 +694,14 @@ export default function DashboardPage() {
             <div className="page-header">
               <div><h2>Schedule</h2><p>Click any cell to add a block</p></div>
               <div style={{display:'flex',gap:10}}>
-                <button className="btn btn-secondary" onClick={autoSchedule}>✨ Auto-Schedule</button>
-                <button className="btn btn-primary" onClick={()=>{setBlockFormDefaults({});setModal('addBlock')}}>+ Add Block</button>
+                <button className="btn btn-secondary" onClick={autoSchedule} style={{display:'flex',alignItems:'center',gap:6}}><Sparkles size={14}/> Auto-Schedule</button>
+                <button className="btn btn-primary" onClick={()=>{setBlockFormDefaults({});setModal('addBlock')}} style={{display:'flex',alignItems:'center',gap:6}}><Plus size={14}/> Add Block</button>
               </div>
             </div>
             <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:18}}>
-              <button className="btn btn-secondary btn-sm" onClick={()=>setWeekOffset(o=>o-1)}>← Prev</button>
+              <button className="btn btn-secondary btn-sm" onClick={()=>setWeekOffset(o=>o-1)} style={{display:'flex',alignItems:'center',gap:4}}><ChevronLeft size={14}/> Prev</button>
               <span style={{fontWeight:700,fontSize:15}}>{dates[0].toLocaleDateString('en',{month:'short',day:'numeric'})} – {dates[6].toLocaleDateString('en',{month:'short',day:'numeric',year:'numeric'})}</span>
-              <button className="btn btn-secondary btn-sm" onClick={()=>setWeekOffset(o=>o+1)}>Next →</button>
+              <button className="btn btn-secondary btn-sm" onClick={()=>setWeekOffset(o=>o+1)} style={{display:'flex',alignItems:'center',gap:4}}>Next <ChevronRight size={14}/></button>
               <button className="btn-ghost btn-sm" style={{background:'none',border:'none',cursor:'pointer',color:'var(--text-muted)',fontSize:13}} onClick={()=>setWeekOffset(0)}>Today</button>
             </div>
             <div style={{display:'flex',gap:14,flexWrap:'wrap',marginBottom:14}}>
@@ -857,7 +870,7 @@ export default function DashboardPage() {
                 {user?.user_metadata?.avatar_url&&<img src={user.user_metadata.avatar_url} alt="" style={{width:40,height:40,borderRadius:'50%'}}/>}
                 <div><div style={{fontWeight:600}}>{user?.user_metadata?.full_name||user?.email}</div><div style={{fontSize:12,color:'var(--text-muted)'}}>{user?.email}</div></div>
               </div>
-              <button className="btn btn-danger btn-sm" onClick={signOut}>Sign Out</button>
+              <button className="btn btn-danger btn-sm" onClick={signOut} style={{display:'flex',alignItems:'center',gap:6}}><LogOut size={14}/> Sign Out</button>
             </div>
 
             <div style={{marginBottom:32}}>
