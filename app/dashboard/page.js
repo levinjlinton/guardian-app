@@ -58,6 +58,13 @@ export default function DashboardPage() {
   const [feedbackSent, setFeedbackSent] = useState(false);
   const [notifPermission, setNotifPermission] = useState('default');
 
+  // AI chat
+  const [chatMessages, setChatMessages] = useState([
+    { role: 'assistant', content: "Hey! I'm your Guardian AI. I can help you prioritize tasks, plan your day, or just think through what to tackle next. What's on your mind?" }
+  ]);
+  const [chatInput, setChatInput] = useState('');
+  const [chatLoading, setChatLoading] = useState(false);
+
   // ============================================================
   // INIT
   // ============================================================
@@ -307,6 +314,33 @@ export default function DashboardPage() {
     else toast('Notifications blocked', 'info');
   }
 
+  async function sendChatMessage(e) {
+    e.preventDefault();
+    if (!chatInput.trim() || chatLoading) return;
+    const userMsg = { role: 'user', content: chatInput.trim() };
+    const newMessages = [...chatMessages, userMsg];
+    setChatMessages(newMessages);
+    setChatInput('');
+    setChatLoading(true);
+    try {
+      const res = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: newMessages.filter(m => m.role !== 'assistant' || newMessages.indexOf(m) > 0).map(m => ({ role: m.role, content: m.content })),
+          projects,
+          blocks,
+        }),
+      });
+      const data = await res.json();
+      if (data.reply) setChatMessages(m => [...m, { role: 'assistant', content: data.reply }]);
+      else setChatMessages(m => [...m, { role: 'assistant', content: 'Sorry, something went wrong. Try again.' }]);
+    } catch {
+      setChatMessages(m => [...m, { role: 'assistant', content: 'Connection error. Please try again.' }]);
+    }
+    setChatLoading(false);
+  }
+
   async function submitFeedback(e) {
     e.preventDefault();
     if (!feedbackText.trim()) return;
@@ -504,7 +538,7 @@ export default function DashboardPage() {
           <div className="logo-text"><h1>Guardian</h1><span>Time Manager</span></div>
         </div>
         <nav>
-          {[['dashboard','📊','Dashboard'],['projects','📁','Projects'],['schedule','📅','Schedule'],['focus','🎯','Focus'],['settings','⚙️','Settings']].map(([v,icon,label]) => (
+          {[['dashboard','📊','Dashboard'],['projects','📁','Projects'],['schedule','📅','Schedule'],['focus','🎯','Focus'],['ai','🤖','AI Assistant'],['settings','⚙️','Settings']].map(([v,icon,label]) => (
             <button key={v} className={`nav-item ${view===v?'active':''}`} onClick={() => setView(v)}>
               <span>{icon}</span><span>{label}</span>
             </button>
@@ -727,6 +761,59 @@ export default function DashboardPage() {
                 </div>
                 <div className="section-label">Blocked Sites</div>
                 {blockedSites.map(s=><div key={s.id} className="blocked-site"><span>{s.icon||'🌐'}</span><div><div className="site-name">{s.name}</div><div className="site-url">{s.url}</div></div><button className="remove-btn" onClick={()=>removeSite(s.id)}>×</button></div>)}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ===== AI ASSISTANT ===== */}
+        {view === 'ai' && (
+          <div>
+            <div className="page-header">
+              <div><h2>🤖 AI Assistant</h2><p>Ask anything about your schedule, projects, or productivity</p></div>
+            </div>
+            <div style={{maxWidth:680,margin:'0 auto'}}>
+              <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:16,overflow:'hidden',display:'flex',flexDirection:'column',height:'60vh'}}>
+                {/* Messages */}
+                <div style={{flex:1,overflowY:'auto',padding:'20px',display:'flex',flexDirection:'column',gap:12}}>
+                  {chatMessages.map((m, i) => (
+                    <div key={i} style={{display:'flex',justifyContent:m.role==='user'?'flex-end':'flex-start'}}>
+                      <div style={{
+                        maxWidth:'80%',padding:'10px 14px',borderRadius:12,fontSize:14,lineHeight:1.6,
+                        background: m.role==='user' ? 'var(--accent)' : 'var(--surface2)',
+                        color: m.role==='user' ? '#fff' : 'var(--text)',
+                        borderBottomRightRadius: m.role==='user' ? 4 : 12,
+                        borderBottomLeftRadius: m.role==='assistant' ? 4 : 12,
+                      }}>
+                        {m.content}
+                      </div>
+                    </div>
+                  ))}
+                  {chatLoading && (
+                    <div style={{display:'flex',justifyContent:'flex-start'}}>
+                      <div style={{background:'var(--surface2)',padding:'10px 14px',borderRadius:12,borderBottomLeftRadius:4,fontSize:14,color:'var(--text-muted)'}}>
+                        Thinking…
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {/* Input */}
+                <form onSubmit={sendChatMessage} style={{padding:'14px 16px',borderTop:'1px solid var(--border)',display:'flex',gap:10}}>
+                  <input
+                    className="form-control"
+                    placeholder="Ask me anything…"
+                    value={chatInput}
+                    onChange={e=>setChatInput(e.target.value)}
+                    style={{flex:1}}
+                    disabled={chatLoading}
+                  />
+                  <button type="submit" className="btn btn-primary" disabled={chatLoading||!chatInput.trim()}>Send</button>
+                </form>
+              </div>
+              <div style={{marginTop:12,display:'flex',gap:8,flexWrap:'wrap'}}>
+                {["What should I focus on today?","How do I beat my deadline?","Help me plan my week","I'm feeling overwhelmed"].map(q=>(
+                  <button key={q} className="btn btn-secondary btn-sm" onClick={()=>setChatInput(q)}>{q}</button>
+                ))}
               </div>
             </div>
           </div>
