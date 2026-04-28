@@ -220,7 +220,7 @@ export default function LandingPage() {
             </div>
             <div style={s.footerCol}>
               <div style={s.footerColTitle}>Legal</div>
-              <a href="#" style={s.footerLink}>Privacy Policy</a>
+              <Link href="/privacy" style={s.footerLink}>Privacy Policy</Link>
               <a href="#" style={s.footerLink}>Terms of Service</a>
               <a href="mailto:support@guardianhours.com" style={s.footerLink}>Support</a>
             </div>
